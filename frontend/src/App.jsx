@@ -15,6 +15,7 @@ import ComplaintDetail from './pages/user/ComplaintDetail';
 import Profile from './pages/user/Profile';
 import Disclaimer from './pages/user/Disclaimer';
 import LegalPage from './pages/LegalPage';
+import TransparencyDashboard from './pages/public/TransparencyDashboard';
 
 // Admin pages
 import AdminLayout from './components/layout/AdminLayout';
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/login" element={user ? <Navigate to={['ADMIN', 'SUPER_ADMIN'].includes(user.role) ? '/admin' : '/dashboard'} replace /> : <UserLogin />} />
             <Route path="/admin/login" element={['ADMIN', 'SUPER_ADMIN'].includes(user?.role) ? <Navigate to="/admin" replace /> : <AdminLogin />} />
             <Route path="/legal/:page" element={<LegalPage />} />
+            <Route path="/transparency" element={<ProtectedRoute><TransparencyDashboard /></ProtectedRoute>} />
 
             {/* User routes */}
             <Route path="/" element={<ProtectedRoute allowedRoles={['USER']}><UserLayout /></ProtectedRoute>}>

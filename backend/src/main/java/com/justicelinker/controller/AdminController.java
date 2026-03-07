@@ -12,14 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
-@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
 @RequiredArgsConstructor
 public class AdminController {
 
@@ -31,9 +30,47 @@ public class AdminController {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
+    @Value("${app.admin-passphrase}")
+    private String adminPassphrase;
+
+    // ============= BOOTSTRAP (First Super Admin) =============
+
+    @PostMapping("/bootstrap")
+    public ResponseEntity<?> bootstrapSuperAdmin(@RequestBody Map<String, String> body) {
+        String secret = body.get("passphrase");
+        String fullName = body.get("fullName");
+        String email = body.get("email");
+        String password = body.get("password");
+
+        if (adminPassphrase == null || !adminPassphrase.equals(secret)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Invalid passphrase"));
+        }
+
+        if (fullName == null || email == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Missing required fields"));
+        }
+
+        if (adminRepository.findByEmail(email).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Admin already exists"));
+        }
+
+        Admin superAdmin = adminRepository.save(Admin.builder()
+                .fullName(fullName)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .role(Admin.AdminRole.SUPER_ADMIN)
+                .department("Headquarters")
+                .build());
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Super Admin bootstrapped successfully",
+                "email", superAdmin.getEmail()));
+    }
+
     // ============= COMPLAINT MANAGEMENT =============
 
     @GetMapping("/complaints")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllComplaints(
             @RequestParam(required = false) Integer stateId,
             @RequestParam(required = false) Integer districtId,
@@ -48,12 +85,14 @@ public class AdminController {
     }
 
     @GetMapping("/complaints/high-priority")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getHighPriorityComplaints(
             @RequestParam(defaultValue = "5") int limit) {
         return ResponseEntity.ok(complaintService.getHighPriorityComplaints(limit));
     }
 
     @GetMapping("/complaints/{complaintId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getComplaint(@PathVariable String complaintId) {
         try {
             return ResponseEntity.ok(complaintService.getComplaintById(complaintId));
@@ -63,27 +102,62 @@ public class AdminController {
     }
 
     @PutMapping("/complaints/{complaintId}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> updateStatus(@PathVariable String complaintId,
-            @RequestBody ComplaintDTO.UpdateStatusRequest request) {
+            @RequestBody ComplaintDTO.UpdateStatusRequest request,
+            Authentication auth) {
         try {
+            Long callerId = Long.parseLong(auth.getName());
+            Admin caller = adminRepository.findById(callerId)
+                    .orElseThrow(() -> new RuntimeException("Admin not found"));
             return ResponseEntity.ok(complaintService.updateStatus(
-                    complaintId, request.getFromStatus(), request.getToStatus()));
+                    complaintId, request.getFromStatus(), request.getToStatus(), caller, request.getReason()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @PutMapping("/complaints/{complaintId}/priority")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> updatePriority(@PathVariable String complaintId,
-            @RequestBody ComplaintDTO.UpdatePriorityRequest request) {
+            @RequestBody ComplaintDTO.UpdatePriorityRequest request,
+            Authentication auth) {
         try {
-            return ResponseEntity.ok(complaintService.updatePriority(complaintId, request.getPriority()));
+            Long callerId = Long.parseLong(auth.getName());
+            Admin caller = adminRepository.findById(callerId)
+                    .orElseThrow(() -> new RuntimeException("Admin not found"));
+            return ResponseEntity.ok(
+                    complaintService.updatePriority(complaintId, request.getPriority(), caller, request.getReason()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/complaints/{complaintId}/assign")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<?> assignComplaint(@PathVariable String complaintId,
+            @RequestBody Map<String, Object> request,
+            Authentication auth) {
+        try {
+            Long callerId = Long.parseLong(auth.getName());
+            Admin caller = adminRepository.findById(callerId)
+                    .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+            String department = (String) request.get("department");
+            Long assigneeId = request.containsKey("assigneeId") && request.get("assigneeId") != null
+                    ? Long.valueOf(request.get("assigneeId").toString())
+                    : null;
+            String reason = (String) request.get("reason");
+
+            return ResponseEntity
+                    .ok(complaintService.assignComplaint(complaintId, department, assigneeId, caller, reason));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @GetMapping("/dashboard/stats")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getDashboardStats() {
         return ResponseEntity.ok(complaintService.getDashboardStats());
     }
@@ -91,6 +165,7 @@ public class AdminController {
     // ============= USER MANAGEMENT =============
 
     @GetMapping("/users")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         var pageable = org.springframework.data.domain.PageRequest.of(page, size);
@@ -109,6 +184,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userId}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> updateUserStatus(@PathVariable Long userId,
             @RequestBody Map<String, String> body) {
         try {
@@ -139,6 +215,7 @@ public class AdminController {
     // ============= ADMIN MANAGEMENT (Super Admin Only) =============
 
     @GetMapping("/admins")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> getAllAdmins(Authentication auth) {
         // Verify caller is SUPER_ADMIN
         Admin caller = adminRepository.findById(Long.parseLong(auth.getName()))
@@ -158,6 +235,7 @@ public class AdminController {
     }
 
     @PostMapping("/admins")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> createAdmin(@RequestBody Map<String, String> body, Authentication auth) {
         // Verify caller is SUPER_ADMIN
         Admin caller = adminRepository.findById(Long.parseLong(auth.getName()))
@@ -201,6 +279,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/admins/{adminId}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> deleteAdmin(@PathVariable Long adminId, Authentication auth) {
         Admin caller = adminRepository.findById(Long.parseLong(auth.getName()))
                 .orElseThrow(() -> new RuntimeException("Admin not found"));

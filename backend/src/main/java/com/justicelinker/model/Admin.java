@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class Admin {
 
     public enum AdminRole {
-        SUPER_ADMIN, ADMIN
+        SUPER_ADMIN, ADMIN, GENERAL_ADMIN, DEPARTMENT_ADMIN, JUDICIAL_ADMIN
     }
 
     @Id

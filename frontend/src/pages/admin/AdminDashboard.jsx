@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                 <StatCard title="Total" value={stats?.totalComplaints} icon={FileText} colorClass="bg-gray-500/10 text-gray-400" />
                 <StatCard title="Submitted" value={stats?.submitted} icon={AlertTriangle} colorClass="bg-yellow-500/10 text-yellow-500" />
                 <StatCard title="Under Review" value={stats?.underReview} icon={Clock} colorClass="bg-blue-500/10 text-blue-500" />
-                <StatCard title="Resolved" value={stats?.resolved} icon={CheckCircle} colorClass="bg-green-500/10 text-green-500" />
+                <StatCard title="Resolved" value={(stats?.resolved || 0) + (stats?.closed || 0)} icon={CheckCircle} colorClass="bg-green-500/10 text-green-500" />
             </div>
 
             {/* All Complaints Section */}

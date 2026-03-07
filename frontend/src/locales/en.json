@@ -22,7 +22,9 @@
     "complaints": "Complaints",
     "profile": "Profile",
     "logout": "Logout",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "no_notifications": "No notifications yet",
+    "transparency": "Transparency"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -48,7 +50,9 @@
     "select_mandal": "Select Mandal",
     "village": "Village",
     "select_village": "Select Village",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "name_required": "Full Name is required",
+    "location_required": "Please complete your location details"
   },
   "complaint": {
     "create_title": "Create Complaint",
@@ -65,7 +69,7 @@
     "description": "Description",
     "description_placeholder": "Describe the issue in detail",
     "max_chars": "Max 1000 chars",
-    "evidence": "Evidence Upload",
+    "evidence": "Evidence Evidence",
     "evidence_recommended": "Optional but Strongly Recommended",
     "evidence_helper": "Uploading photo evidence helps faster verification and resolution. Up to 3 images, PNG/JPEG, max 5MB each.",
     "evidence_desc": "Up to 3 images, PNG/JPEG, max 5MB each",
@@ -76,7 +80,13 @@
     "submit": "Submit Complaint",
     "submitting": "Submitting...",
     "success": "Complaint submitted successfully!",
-    "limit_reached": "Monthly complaint limit reached"
+    "limit_reached": "Monthly complaint limit reached",
+    "select_type_error": "Please select an issue type",
+    "subject_error": "Please enter a subject",
+    "description_error": "Please enter a description",
+    "truthfulness_error": "Please confirm the truthfulness of your complaint",
+    "description_tip_title": "Why a clear description is important",
+    "description_tip": "A clear and correct description helps us solve your issue effectively. Vague or confusing descriptions might lead to your complaint being rejected due to lack of information."
   },
   "my_complaints": {
     "title": "My Complaints",
@@ -102,15 +112,32 @@
   },
   "status": {
     "SUBMITTED": "Submitted",
-    "IN_REVIEW": "In Review",
+    "UNDER_REVIEW": "Under Review",
     "VERIFIED": "Verified",
-    "REJECTED": "Rejected"
+    "ASSIGNED": "Assigned",
+    "IN_PROGRESS": "In Progress",
+    "RESOLVED": "Resolved",
+    "REJECTED": "Rejected",
+    "CLOSED": "Closed",
+    "REOPENED": "Reopened"
   },
   "priority_labels": {
     "P0": "Critical",
     "P1": "High",
     "P2": "Medium",
     "P3": "Low"
+  },
+  "timeline": {
+    "title": "Status Timeline",
+    "from": "from",
+    "by": "by"
+  },
+  "location": {
+    "title": "Location",
+    "state": "State",
+    "district": "District",
+    "mandal": "Mandal",
+    "village": "Village"
   },
   "issue_types": {
     "POLICE_MISCONDUCT": "Police Misconduct",
@@ -137,11 +164,13 @@
     "support_email": "justicelinker.official@gmail.com",
     "copyright": "Linking Courage to Justice. All rights reserved.",
     "built_for": "A harassment and injustice reporting initiative · Built for the people of Andhra Pradesh",
-    "independent_disclaimer": "This platform is an independent civic reporting initiative and is not officially affiliated with any government authority unless explicitly stated."
+    "independent_disclaimer": "This platform is an independent civic reporting initiative and is not officially affiliated with any government authority unless explicitly stated.",
+    "transparency": "Transparency"
   },
   "common": {
     "loading": "Loading...",
     "error": "Something went wrong",
+    "last_updated": "Last updated on",
     "success": "Success",
     "cancel": "Cancel",
     "save": "Save",
@@ -153,5 +182,16 @@
     "search": "Search...",
     "no_data": "No data available",
     "confirm": "Are you sure?"
+  },
+  "transparency": {
+    "title": "Public Transparency Dashboard",
+    "subtitle": "Real-time metrics on grievance redressal. We believe in open data and government accountability.",
+    "total_complaints": "Total Complaints",
+    "pending_cases": "Pending Cases",
+    "resolved_cases": "Resolved Cases",
+    "avg_resolution_time": "Average Resolution Time",
+    "hrs": "hrs",
+    "sla_title": "Our SLA Commitment",
+    "sla_desc": "P0 Critical cases are handled within 24 hours. If any case exceeds its allowable timeframe, our automated rules engine immediately escalates it to the highest bureaucratic levels and notifies internal audit."
   }
 }

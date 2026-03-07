@@ -2,12 +2,15 @@ spring:
   application:
     name: JusticeLinker
 
+  config:
+    import: optional:file:.env[.properties]
+
   # MySQL Database
   datasource:
-    url: jdbc:mysql://localhost:3306/justicelinker?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/justicelinker?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: Krishna@31540
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:YOUR_LOCAL_DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -20,10 +23,10 @@ spring:
 
   # Gmail SMTP
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: justicelinker.noreply@gmail.com
-    password: xsorwsmlkhpntngp
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:YOUR_EMAIL_HERE@gmail.com}
+    password: ${SPRING_MAIL_PASSWORD:YOUR_EMAIL_APP_PASSWORD}
     properties:
       mail:
         smtp:
@@ -47,13 +50,14 @@ jwt:
 
 # Cloudinary
 cloudinary:
-  cloud-name: dqccynkls
-  api-key: "693998595316399"
-  api-secret: o9OB1j3_vo44AW-NUkmWtIUzFsU
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:YOUR_CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY:YOUR_CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET:YOUR_CLOUDINARY_API_SECRET}
 
 # App Config
 app:
   max-complaints-per-month: 5
+  admin-passphrase: ${ADMIN_PASSPHRASE:JusticeLinkerDefaultPassphrase}
   max-images-per-complaint: 3
   max-image-size-mb: 5
   otp-expiry-minutes: 5

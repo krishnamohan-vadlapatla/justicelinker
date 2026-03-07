@@ -49,9 +49,12 @@ export default function Profile() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!form.fullName.trim()) { toast.error('Full Name is required'); return; }
+        if (!form.fullName.trim()) {
+            toast.error(t('profile.name_required') || 'Full Name is required');
+            return;
+        }
         if (!form.stateId || !form.districtId || !form.mandalId || !form.villageId) {
-            toast.error('Please complete your location details');
+            toast.error(t('profile.location_required') || 'Please complete your location details');
             return;
         }
 

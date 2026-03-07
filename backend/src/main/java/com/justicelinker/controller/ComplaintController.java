@@ -54,4 +54,5 @@ public class ComplaintController {
         Long userId = Long.parseLong(auth.getName());
         return ResponseEntity.ok(complaintService.getUserNotifications(userId));
     }
+
 }

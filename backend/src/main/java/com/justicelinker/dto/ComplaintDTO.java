@@ -72,11 +72,13 @@ public class ComplaintDTO {
     public static class UpdateStatusRequest {
         private String fromStatus;
         private String toStatus;
+        private String reason;
     }
 
     @Data
     public static class UpdatePriorityRequest {
         private String priority;
+        private String reason;
     }
 
     @Data

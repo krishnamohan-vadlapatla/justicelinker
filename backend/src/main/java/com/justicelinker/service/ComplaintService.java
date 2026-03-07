@@ -29,27 +29,27 @@ public class ComplaintService {
     private final MandalRepository mandalRepository;
     private final VillageRepository villageRepository;
     private final StatusHistoryRepository statusHistoryRepository;
+    private final AdminActionLogRepository adminActionLogRepository;
     private final EmailService emailService;
 
     @Value("${app.max-complaints-per-month}")
     private int maxComplaintsPerMonth;
 
-    // Valid status transitions: from -> allowed to
-    private static final Map<Complaint.ComplaintStatus, Set<Complaint.ComplaintStatus>> VALID_TRANSITIONS = Map.of(
-            Complaint.ComplaintStatus.SUBMITTED,
-            Set.of(Complaint.ComplaintStatus.UNDER_REVIEW, Complaint.ComplaintStatus.REJECTED),
+    // We enforce strict transitions for normal admins, but allow SUPER_ADMIN to
+    // bypass them.
+    private static final Map<Complaint.ComplaintStatus, Set<Complaint.ComplaintStatus>> STRICT_TRANSITIONS = Map.of(
+            Complaint.ComplaintStatus.SUBMITTED, Set.of(Complaint.ComplaintStatus.UNDER_REVIEW),
             Complaint.ComplaintStatus.UNDER_REVIEW,
             Set.of(Complaint.ComplaintStatus.VERIFIED, Complaint.ComplaintStatus.REJECTED),
-            Complaint.ComplaintStatus.VERIFIED,
-            Set.of(Complaint.ComplaintStatus.ASSIGNED, Complaint.ComplaintStatus.REJECTED),
-            Complaint.ComplaintStatus.ASSIGNED,
-            Set.of(Complaint.ComplaintStatus.IN_PROGRESS, Complaint.ComplaintStatus.REJECTED),
-            Complaint.ComplaintStatus.IN_PROGRESS,
-            Set.of(Complaint.ComplaintStatus.RESOLVED, Complaint.ComplaintStatus.REJECTED),
+            Complaint.ComplaintStatus.VERIFIED, Set.of(Complaint.ComplaintStatus.ASSIGNED),
+            Complaint.ComplaintStatus.ASSIGNED, Set.of(Complaint.ComplaintStatus.IN_PROGRESS),
+            Complaint.ComplaintStatus.IN_PROGRESS, Set.of(Complaint.ComplaintStatus.RESOLVED),
             Complaint.ComplaintStatus.RESOLVED,
             Set.of(Complaint.ComplaintStatus.CLOSED, Complaint.ComplaintStatus.IN_PROGRESS),
             Complaint.ComplaintStatus.REJECTED, Set.of(Complaint.ComplaintStatus.UNDER_REVIEW),
-            Complaint.ComplaintStatus.CLOSED, Set.of());
+            Complaint.ComplaintStatus.CLOSED, Set.of(Complaint.ComplaintStatus.REOPENED),
+            Complaint.ComplaintStatus.REOPENED,
+            Set.of(Complaint.ComplaintStatus.UNDER_REVIEW, Complaint.ComplaintStatus.VERIFIED));
 
     @Transactional
     public ComplaintDTO.ComplaintResponse createComplaint(Long userId, ComplaintDTO.CreateRequest request) {
@@ -182,37 +182,69 @@ public class ComplaintService {
     }
 
     @Transactional
-    public ComplaintDTO.ComplaintResponse updateStatus(String complaintId, String fromStatus, String toStatus) {
+    public ComplaintDTO.ComplaintResponse updateStatus(String complaintId, String fromStatus, String toStatus,
+            Admin caller, String reason) {
         Complaint complaint = complaintRepository.findByComplaintId(complaintId)
                 .orElseThrow(() -> new RuntimeException("Complaint not found"));
 
         Complaint.ComplaintStatus currentStatus = complaint.getStatus();
         Complaint.ComplaintStatus newStatus = Complaint.ComplaintStatus.valueOf(toStatus);
 
-        // Validate: check concurrent modification
+        // Validate concurrent modification
         if (fromStatus != null && !currentStatus.name().equals(fromStatus)) {
             throw new RuntimeException("Concurrent modification: status has already changed");
         }
 
-        // Validate: check transition is allowed
-        Set<Complaint.ComplaintStatus> allowed = VALID_TRANSITIONS.getOrDefault(currentStatus, Set.of());
-        if (!allowed.contains(newStatus)) {
-            throw new RuntimeException("Invalid transition: " + currentStatus + " → " + newStatus
-                    + ". Allowed: " + allowed);
+        // Role-based Access Control
+        Admin.AdminRole role = caller.getRole();
+
+        // Enforce strict workflow for non-super admins to prevent mistakes
+        if (role != Admin.AdminRole.SUPER_ADMIN) {
+            Set<Complaint.ComplaintStatus> allowed = STRICT_TRANSITIONS.getOrDefault(currentStatus, Set.of());
+            if (!allowed.contains(newStatus)) {
+                throw new RuntimeException("Strict workflow enforced: Cannot transition from " + currentStatus + " to "
+                        + newStatus + ". Allowed: " + allowed);
+            }
         }
+        if (role == Admin.AdminRole.DEPARTMENT_ADMIN) {
+            if (newStatus != Complaint.ComplaintStatus.IN_PROGRESS && newStatus != Complaint.ComplaintStatus.RESOLVED) {
+                throw new RuntimeException("Department Admins can only update status to In Progress or Resolved.");
+            }
+            if (!caller.getDepartment().equals(complaint.getAssignedDepartment())) {
+                throw new RuntimeException("You can only manage complaints assigned to your department.");
+            }
+        } else if (role == Admin.AdminRole.GENERAL_ADMIN) {
+            if (newStatus == Complaint.ComplaintStatus.CLOSED) {
+                throw new RuntimeException("General Admins cannot close complaints directly.");
+            }
+        } // Super admin and Judicial admin have full override.
 
         complaint.setStatus(newStatus);
         complaint = complaintRepository.save(complaint);
 
-        // Record status change history
+        // Record status change in status history
         statusHistoryRepository.save(StatusHistory.builder()
                 .complaint(complaint)
                 .fromStatus(currentStatus)
                 .toStatus(newStatus)
-                .changedBy("ADMIN")
+                .changedBy(caller.getFullName() + " (" + caller.getRole().name() + ")")
+                .remarks(reason)
                 .build());
 
-        log.info("Complaint {} status changed: {} → {}", complaintId, currentStatus, newStatus);
+        // Save detailed Audit Log
+        adminActionLogRepository.save(AdminActionLog.builder()
+                .adminId(caller.getId())
+                .adminName(caller.getFullName())
+                .adminRole(caller.getRole().name())
+                .action("STATUS_CHANGE")
+                .complaintId(complaintId)
+                .previousStatus(currentStatus.name())
+                .newStatus(newStatus.name())
+                .reason(reason)
+                .build());
+
+        log.info("Complaint {} status changed: {} → {} by {}", complaintId, currentStatus, newStatus,
+                caller.getEmail());
 
         // Send status update email to complaint owner
         try {
@@ -226,12 +258,85 @@ public class ComplaintService {
     }
 
     @Transactional
-    public ComplaintDTO.ComplaintResponse updatePriority(String complaintId, String priority) {
+    public ComplaintDTO.ComplaintResponse assignComplaint(String complaintId, String department, Long assigneeId,
+            Admin caller, String reason) {
         Complaint complaint = complaintRepository.findByComplaintId(complaintId)
                 .orElseThrow(() -> new RuntimeException("Complaint not found"));
 
+        if (complaint.getStatus() != Complaint.ComplaintStatus.VERIFIED
+                && complaint.getStatus() != Complaint.ComplaintStatus.REOPENED) {
+            throw new RuntimeException("Only Verified or Reopened complaints can be assigned.");
+        }
+
+        Admin.AdminRole role = caller.getRole();
+        if (role == Admin.AdminRole.DEPARTMENT_ADMIN) {
+            throw new RuntimeException("Department Admins cannot perform assignments.");
+        }
+
+        String oldDept = complaint.getAssignedDepartment();
+
+        // Conflict of Interest minimal routing logic:
+        // if the issue type is CORRUPTION and against their own department, escalate to
+        // Judicial.
+        if (complaint.getIssueType() == Complaint.IssueType.CORRUPTION
+                && department.equalsIgnoreCase("Police Department")) {
+            department = "Judicial";
+            complaint.setEscalationLevel(complaint.getEscalationLevel() + 1);
+        }
+
+        complaint.setAssignedDepartment(department);
+        complaint.setAssignedAdminId(assigneeId);
+        complaint.setStatus(Complaint.ComplaintStatus.ASSIGNED);
+        complaint = complaintRepository.save(complaint);
+
+        statusHistoryRepository.save(StatusHistory.builder()
+                .complaint(complaint)
+                .fromStatus(Complaint.ComplaintStatus.VERIFIED)
+                .toStatus(Complaint.ComplaintStatus.ASSIGNED)
+                .changedBy(caller.getFullName() + " (" + caller.getRole().name() + ")")
+                .remarks("Assigned to " + department + (reason != null ? ". Reason: " + reason : ""))
+                .build());
+
+        adminActionLogRepository.save(AdminActionLog.builder()
+                .adminId(caller.getId())
+                .adminName(caller.getFullName())
+                .adminRole(caller.getRole().name())
+                .action("ASSIGNMENT")
+                .complaintId(complaintId)
+                .previousStatus(oldDept)
+                .newStatus(department)
+                .reason(reason)
+                .build());
+
+        return mapToResponse(complaint);
+    }
+
+    @Transactional
+    public ComplaintDTO.ComplaintResponse updatePriority(String complaintId, String priority, Admin caller,
+            String reason) {
+        Complaint complaint = complaintRepository.findByComplaintId(complaintId)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+
+        Admin.AdminRole role = caller.getRole();
+        if (role == Admin.AdminRole.DEPARTMENT_ADMIN) {
+            throw new RuntimeException("Department Admins cannot change complaint priority.");
+        }
+
+        String oldPriority = complaint.getPriority().name();
         complaint.setPriority(Complaint.Priority.valueOf(priority));
         complaint = complaintRepository.save(complaint);
+
+        adminActionLogRepository.save(AdminActionLog.builder()
+                .adminId(caller.getId())
+                .adminName(caller.getFullName())
+                .adminRole(caller.getRole().name())
+                .action("PRIORITY_CHANGE")
+                .complaintId(complaintId)
+                .previousStatus(oldPriority)
+                .newStatus(priority)
+                .reason(reason)
+                .build());
+
         return mapToResponse(complaint);
     }
 
@@ -298,11 +403,10 @@ public class ComplaintService {
                 .mandalName(c.getMandal() != null ? c.getMandal().getName() : null)
                 .villageName(c.getVillage() != null ? c.getVillage().getName() : null)
                 .stateId(c.getState() != null ? c.getState().getId() : null)
-                .districtId(c.getDistrict() != null ? c.getDistrict().getId() : null)
-                .mandalId(c.getMandal() != null ? c.getMandal().getId() : null)
                 .villageId(c.getVillage() != null ? c.getVillage().getId() : null)
                 .latitude(c.getLatitude())
                 .longitude(c.getLongitude())
+
                 .attachments(assetResponses)
                 .timeline(getTimeline(c))
                 .createdAt(c.getCreatedAt())

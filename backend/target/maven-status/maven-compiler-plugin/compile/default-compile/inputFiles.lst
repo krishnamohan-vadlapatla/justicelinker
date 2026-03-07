@@ -5,6 +5,7 @@ D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\AdminControl
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\AuthController.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\ComplaintController.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\LocationController.java
+D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\PublicController.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\UploadController.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\controller\UserController.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\dto\AuthDTO.java
@@ -12,17 +13,21 @@ D:\JusticeLinker\backend\src\main\java\com\justicelinker\dto\ComplaintDTO.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\dto\ProfileDTO.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\JusticeLinkerApplication.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\Admin.java
+D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\AdminActionLog.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\Asset.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\Complaint.java
+D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\ComplaintUpvote.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\District.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\Mandal.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\State.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\StatusHistory.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\User.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\model\Village.java
+D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\AdminActionLogRepository.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\AdminRepository.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\AssetRepository.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\ComplaintRepository.java
+D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\ComplaintUpvoteRepository.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\DistrictRepository.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\MandalRepository.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\repository\StateRepository.java
@@ -34,3 +39,4 @@ D:\JusticeLinker\backend\src\main\java\com\justicelinker\security\JwtUtil.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\service\AuthService.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\service\ComplaintService.java
 D:\JusticeLinker\backend\src\main\java\com\justicelinker\service\EmailService.java
+D:\JusticeLinker\backend\src\main\java\com\justicelinker\service\EscalationService.java

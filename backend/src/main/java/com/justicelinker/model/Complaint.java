@@ -70,6 +70,16 @@ public class Complaint {
     @Column(precision = 11)
     private Double longitude;
 
+    @Column(name = "assigned_department", length = 50)
+    private String assignedDepartment;
+
+    @Column(name = "assigned_admin_id")
+    private Long assignedAdminId;
+
+    @Column(name = "escalation_level")
+    @Builder.Default
+    private Integer escalationLevel = 0;
+
     @Column(name = "created_at")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -84,9 +94,24 @@ public class Complaint {
     }
 
     public enum IssueType {
-        POLICE_MISCONDUCT, GOVT_MISCONDUCT, CORRUPTION_BRIBERY,
-        POLITICAL_HARASSMENT, LAND_PROPERTY_DISPUTE, EXTORTION_THREATS,
-        LEGAL_DISPUTE, CIVIC_ISSUES, MUNICIPALITY_PANCHAYAT, OTHER
+        POLICE_MISCONDUCT,
+        GOVT_MISCONDUCT,
+        CORRUPTION_BRIBERY,
+        POLITICAL_HARASSMENT,
+        LAND_PROPERTY_DISPUTE,
+        EXTORTION_THREATS,
+        LEGAL_DISPUTE,
+        CIVIC_ISSUES,
+        MUNICIPALITY_PANCHAYAT,
+        OTHER,
+        // Keep these for backward compatibility if any data exists
+        CORRUPTION,
+        INFRASTRUCTURE,
+        PUBLIC_SERVICES,
+        HARASSMENT,
+        LAND_DISPUTE,
+        DOMESTIC_VIOLENCE,
+        FRAUD
     }
 
     public enum Priority {
@@ -94,6 +119,6 @@ public class Complaint {
     }
 
     public enum ComplaintStatus {
-        SUBMITTED, UNDER_REVIEW, VERIFIED, ASSIGNED, IN_PROGRESS, RESOLVED, REJECTED, CLOSED
+        SUBMITTED, UNDER_REVIEW, VERIFIED, ASSIGNED, IN_PROGRESS, RESOLVED, REJECTED, CLOSED, REOPENED
     }
 }

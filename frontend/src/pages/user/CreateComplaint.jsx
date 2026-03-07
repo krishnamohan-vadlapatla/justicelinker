@@ -116,10 +116,10 @@ export default function CreateComplaint() {
 
 
     const handleSubmit = async () => {
-        if (!form.issueType) { toast.error('Select issue type'); return; }
-        if (!form.subject) { toast.error('Enter subject'); return; }
-        if (!form.description) { toast.error('Enter description'); return; }
-        if (!truthfulness) { toast.error('Please confirm your complaint is truthful'); return; }
+        if (!form.issueType) { toast.error(t('complaint.select_type_error') || 'Select issue type'); return; }
+        if (!form.subject.trim()) { toast.error(t('complaint.subject_error') || 'Enter subject'); return; }
+        if (!form.description.trim()) { toast.error(t('complaint.description_error') || 'Enter description'); return; }
+        if (!truthfulness) { toast.error(t('complaint.truthfulness_error') || 'Please confirm your complaint is truthful'); return; }
 
 
         setLoading(true);
@@ -225,6 +225,20 @@ export default function CreateComplaint() {
                         placeholder={t('complaint.description_placeholder')}
                         rows={4} className="input-field resize-none" />
                     <p className="text-xs text-gray-500 mt-1 text-right">{form.description.length}/1000</p>
+
+                    <div className="mt-3 p-3 bg-brand-orange/5 border border-brand-orange/20 rounded-xl">
+                        <div className="flex gap-3">
+                            <AlertTriangle size={18} className="text-brand-orange shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="text-xs font-bold text-brand-orange uppercase tracking-wider mb-1">
+                                    {t('complaint.description_tip_title')}
+                                </h4>
+                                <p className="text-xs text-gray-400 leading-relaxed">
+                                    {t('complaint.description_tip')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Evidence Upload */}

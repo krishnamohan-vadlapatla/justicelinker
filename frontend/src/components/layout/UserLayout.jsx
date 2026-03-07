@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { Home, FileText, User, LogOut, Bell, Mail, ShieldCheck, X } from 'lucide-react';
+import { Home, FileText, User, LogOut, Bell, Mail, ShieldCheck, X, Activity } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { getMyNotifications } from '../../api';
 
@@ -28,6 +28,7 @@ export default function UserLayout() {
         { to: '/dashboard', icon: Home, label: t('nav.home') },
         { to: '/complaints', icon: FileText, label: t('nav.complaints') },
         { to: '/profile', icon: User, label: t('nav.profile') },
+        { to: '/transparency', icon: Activity, label: t('nav.transparency') },
     ];
 
     const fetchNotifications = async () => {
@@ -115,7 +116,7 @@ export default function UserLayout() {
                             {showNotifs && (
                                 <div className="absolute right-0 top-12 w-80 bg-dark-card border border-dark-border rounded-xl shadow-2xl z-50 overflow-hidden">
                                     <div className="flex items-center justify-between px-4 py-3 border-b border-dark-border">
-                                        <h4 className="text-sm font-semibold text-gray-200">Notifications</h4>
+                                        <h4 className="text-sm font-semibold text-gray-200">{t('nav.notifications')}</h4>
                                         <button onClick={() => setShowNotifs(false)} className="text-gray-500 hover:text-white">
                                             <X size={14} />
                                         </button>
@@ -126,9 +127,9 @@ export default function UserLayout() {
                                                 <div className="animate-spin w-5 h-5 border-2 border-brand-orange border-t-transparent rounded-full" />
                                             </div>
                                         ) : notifications.length === 0 ? (
-                                            <div className="text-center py-8 text-gray-500 text-xs">
+                                            <div className="text-center py-8 text-gray-500 text-xs px-4">
                                                 <Bell size={24} className="mx-auto mb-2 opacity-30" />
-                                                No notifications yet
+                                                {t('nav.no_notifications')}
                                             </div>
                                         ) : (
                                             notifications.map((n, i) => (
@@ -143,9 +144,9 @@ export default function UserLayout() {
                                                     </div>
                                                     <p className="text-xs text-gray-300 truncate mb-1">{n.subject}</p>
                                                     <div className="flex items-center gap-1 text-[11px]">
-                                                        <span className="text-gray-500">{n.fromStatus?.replace('_', ' ') || 'New'}</span>
+                                                        <span className="text-gray-500">{n.fromStatus ? t(`status.${n.fromStatus}`) : 'New'}</span>
                                                         <span className="text-gray-600">→</span>
-                                                        <span className="text-brand-orange font-medium">{n.toStatus?.replace('_', ' ')}</span>
+                                                        <span className="text-brand-orange font-medium">{t(`status.${n.toStatus}`)}</span>
                                                     </div>
                                                 </button>
                                             ))
@@ -209,6 +210,7 @@ export default function UserLayout() {
                                 <li><NavLink to="/complaints/new" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('dashboard.file_complaint')}</NavLink></li>
                                 <li><NavLink to="/complaints" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.complaints')}</NavLink></li>
                                 <li><NavLink to="/profile" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.profile')}</NavLink></li>
+                                <li><NavLink to="/transparency" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.transparency')}</NavLink></li>
                             </ul>
                         </div>
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getComplaint } from '../../api';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Calendar, MapPin, Tag, AlertCircle, Image as ImageIcon, CheckCircle, Clock, Activity } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Tag, AlertCircle, Image as ImageIcon, CheckCircle, Clock, Activity, ThumbsUp } from 'lucide-react';
 
 export default function ComplaintDetail() {
     const { id } = useParams();
@@ -19,6 +19,7 @@ export default function ComplaintDetail() {
             .catch(() => toast.error(t('common.error')))
             .finally(() => setLoading(false));
     }, [id, t]);
+
 
     if (loading) return (
         <div className="flex items-center justify-center p-16">
@@ -45,12 +46,6 @@ export default function ComplaintDetail() {
         RESOLVED: 'bg-green-500/10 text-green-400 text-xs font-semibold px-3 py-1 rounded-full',
         REJECTED: 'badge-rejected',
         CLOSED: 'bg-gray-500/10 text-gray-400 text-xs font-semibold px-3 py-1 rounded-full',
-    };
-
-    const statusLabels = {
-        SUBMITTED: 'Submitted', UNDER_REVIEW: 'Under Review', VERIFIED: 'Verified',
-        ASSIGNED: 'Assigned', IN_PROGRESS: 'In Progress', RESOLVED: 'Resolved',
-        REJECTED: 'Rejected', CLOSED: 'Closed',
     };
 
     const priorityColors = {
@@ -81,6 +76,7 @@ export default function ComplaintDetail() {
                     <span className={priorityColors[complaint.priority] || 'priority-p2'}>
                         {t(`priority_labels.${complaint.priority}`)}
                     </span>
+
                 </div>
 
                 <h1 className="text-xl sm:text-2xl font-bold mb-2">{complaint.subject}</h1>
@@ -114,30 +110,30 @@ export default function ComplaintDetail() {
             {(complaint.stateName || complaint.districtName || complaint.mandalName || complaint.villageName) && (
                 <div className="card mb-4">
                     <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3 flex items-center gap-2">
-                        <MapPin size={14} /> Location
+                        <MapPin size={14} /> {t('location.title')}
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {complaint.stateName && (
                             <div>
-                                <p className="text-xs text-gray-500 mb-1">State</p>
+                                <p className="text-xs text-gray-500 mb-1">{t('location.state')}</p>
                                 <p className="text-sm font-medium">{complaint.stateName}</p>
                             </div>
                         )}
                         {complaint.districtName && (
                             <div>
-                                <p className="text-xs text-gray-500 mb-1">District</p>
+                                <p className="text-xs text-gray-500 mb-1">{t('location.district')}</p>
                                 <p className="text-sm font-medium">{complaint.districtName}</p>
                             </div>
                         )}
                         {complaint.mandalName && (
                             <div>
-                                <p className="text-xs text-gray-500 mb-1">Mandal</p>
+                                <p className="text-xs text-gray-500 mb-1">{t('location.mandal')}</p>
                                 <p className="text-sm font-medium">{complaint.mandalName}</p>
                             </div>
                         )}
                         {complaint.villageName && (
                             <div>
-                                <p className="text-xs text-gray-500 mb-1">Village</p>
+                                <p className="text-xs text-gray-500 mb-1">{t('location.village')}</p>
                                 <p className="text-sm font-medium">{complaint.villageName}</p>
                             </div>
                         )}
@@ -149,7 +145,7 @@ export default function ComplaintDetail() {
             {complaint.timeline && complaint.timeline.length > 0 && (
                 <div className="card mb-4">
                     <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-4 flex items-center gap-2">
-                        <Activity size={14} /> Status Timeline
+                        <Activity size={14} /> {t('timeline.title')}
                     </h3>
                     <div className="relative">
                         {/* Vertical line */}
@@ -169,10 +165,10 @@ export default function ComplaintDetail() {
                                         <div className="flex-1 pb-1">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusColors[entry.toStatus] || 'bg-gray-700 text-gray-300'}`}>
-                                                    {statusLabels[entry.toStatus] || entry.toStatus}
+                                                    {t(`status.${entry.toStatus}`)}
                                                 </span>
                                                 {entry.fromStatus && (
-                                                    <span className="text-[10px] text-gray-600">from {statusLabels[entry.fromStatus] || entry.fromStatus}</span>
+                                                    <span className="text-[10px] text-gray-600">{t('timeline.from')} {t(`status.${entry.fromStatus}`)}</span>
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-3 mt-1">
@@ -180,7 +176,7 @@ export default function ComplaintDetail() {
                                                     {new Date(entry.changedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                                 {entry.changedBy && (
-                                                    <span className="text-[10px] text-gray-600">by {entry.changedBy}</span>
+                                                    <span className="text-[10px] text-gray-600">{t('timeline.by')} {entry.changedBy}</span>
                                                 )}
                                             </div>
                                             {entry.remarks && (
@@ -199,7 +195,7 @@ export default function ComplaintDetail() {
             {complaint.attachments && complaint.attachments.length > 0 && (
                 <div className="card mb-4">
                     <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3 flex items-center gap-2">
-                        <ImageIcon size={14} /> Evidence ({complaint.attachments.length})
+                        <ImageIcon size={14} /> {t('complaint.evidence')} ({complaint.attachments.length})
                     </h3>
                     <div className="grid grid-cols-3 gap-3">
                         {complaint.attachments.map((att, i) => (
