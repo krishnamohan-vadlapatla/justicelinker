@@ -197,7 +197,7 @@ export default function UserLogin() {
                         {t('login.terms')}{' '}
                         <span onClick={() => navigate('/legal/terms')} className="text-brand-orange cursor-pointer hover:underline">{t('login.terms_link')}</span>
                         {' & '}
-                        <span onClick={() => navigate('/legal/privacy')} className="text-brand-orange cursor-pointer hover:underline">{t('login.privacy_link')}</span>
+                        <span onClick={() => navigate('/legal/privacy-policy')} className="text-brand-orange cursor-pointer hover:underline">{t('login.privacy_link')}</span>
                     </p>
                     <div className="text-center mt-4">
                         <button onClick={() => navigate('/admin/login')} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
