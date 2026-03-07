@@ -66,4 +66,4 @@ app:
   support-email: justicelinker.official@gmail.com
 
 server:
-  port: 8081
+  port: ${PORT:8080}
