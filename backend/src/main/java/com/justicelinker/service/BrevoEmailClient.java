@@ -12,7 +12,7 @@ import java.util.*;
 @Slf4j
 public class BrevoEmailClient {
 
-    @Value("${BREVO_API_KEY}")
+    @Value("${brevo.api-key}")
     private String apiKey;
 
     private final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
