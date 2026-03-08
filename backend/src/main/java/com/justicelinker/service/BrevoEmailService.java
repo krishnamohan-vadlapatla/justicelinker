@@ -17,32 +17,32 @@ public class BrevoEmailClient {
 
     private final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
-    public void sendEmail(String fromEmail, String fromName, String to, String subject, String html) {
+    public void sendEmail(String fromEmail, String fromName, String to, String subject, String htmlContent) {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> body = new HashMap<>();
 
         Map<String, String> sender = new HashMap<>();
-        sender.put("name", fromName);
         sender.put("email", fromEmail);
+        sender.put("name", fromName);
 
         Map<String, String> recipient = new HashMap<>();
         recipient.put("email", to);
 
-        payload.put("sender", sender);
-        payload.put("to", List.of(recipient));
-        payload.put("subject", subject);
-        payload.put("htmlContent", html);
+        body.put("sender", sender);
+        body.put("to", List.of(recipient));
+        body.put("subject", subject);
+        body.put("htmlContent", htmlContent);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("api-key", apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
         restTemplate.postForEntity(BREVO_URL, request, String.class);
 
-        log.info("Brevo email sent to: {}", to);
+        log.info("Email sent via Brevo to {}", to);
     }
 }
