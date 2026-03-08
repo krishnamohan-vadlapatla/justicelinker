@@ -98,6 +98,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+             
+         <dependency>
+             <groupId>com.sendinblue</groupId>
+             <artifactId>sib-api-v3-sdk</artifactId>
+             <version>8.5.0</version>
+         </dependency>
+             
     </dependencies>
 
     <build>
