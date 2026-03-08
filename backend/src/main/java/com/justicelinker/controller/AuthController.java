@@ -20,6 +20,16 @@ public class AuthController {
 
     private final AuthService authService;
 
+    private ResponseCookie createJwtCookie(String token) {
+        return ResponseCookie.from("jwt", token)
+                .httpOnly(true)
+                .secure(true)               // Must be HTTPS in production
+                .path("/")
+                .maxAge(Duration.ofHours(24))
+                .sameSite("None")           // For cross-site requests from Vercel
+                .build();
+    }
+
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody AuthDTO.SendOtpRequest request) {
         try {
@@ -34,15 +44,8 @@ public class AuthController {
     public ResponseEntity<?> verifyOtp(@RequestBody AuthDTO.VerifyOtpRequest request) {
         try {
             String token = authService.verifyOtp(request.getEmail(), request.getOtp());
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .httpOnly(true)
-                    .secure(true) // Set to true in production
-                    .path("/")
-                    .maxAge(Duration.ofHours(24))
-                    .sameSite("None")
-                    .build();
             return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, createJwtCookie(token).toString())
                     .body(AuthDTO.AuthResponse.builder()
                             .message("Logged in successfully")
                             .role("USER")
@@ -56,15 +59,8 @@ public class AuthController {
     public ResponseEntity<?> adminLogin(@RequestBody AuthDTO.AdminLoginRequest request) {
         try {
             String token = authService.adminLogin(request.getEmail(), request.getPassword());
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .httpOnly(true)
-                    .secure(false)
-                    .path("/")
-                    .maxAge(Duration.ofHours(24))
-                    .sameSite("Lax")
-                    .build();
             return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, createJwtCookie(token).toString())
                     .body(AuthDTO.AuthResponse.builder()
                             .message("Logged in successfully")
                             .role("ADMIN")
@@ -93,10 +89,10 @@ public class AuthController {
     public ResponseEntity<?> logout() {
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
