@@ -34,6 +34,9 @@ cloudinary:
   api-key: ${CLOUDINARY_API_KEY:YOUR_CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET:YOUR_CLOUDINARY_API_SECRET}
 
+brevo:
+  api-key: ${BREVO_API_KEY}
+
 app:
   max-complaints-per-month: 5
   admin-passphrase: ${ADMIN_PASSPHRASE:JusticeLinkerDefaultPassphrase}
