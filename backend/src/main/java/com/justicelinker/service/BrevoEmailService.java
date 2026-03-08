@@ -1,44 +1,48 @@
-package com.justicelinker.services;
+package com.justicelinker.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
-@Service
-public class BrevoEmailService {
+@Component
+@Slf4j
+public class BrevoEmailClient {
 
     @Value("${BREVO_API_KEY}")
     private String apiKey;
 
     private final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
-    public void sendEmail(String to, String subject, String htmlContent) {
+    public void sendEmail(String fromEmail, String fromName, String to, String subject, String html) {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        Map<String, Object> email = new HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
 
         Map<String, String> sender = new HashMap<>();
-        sender.put("name", "JusticeLinker");
-        sender.put("email", "justicelinker.noreply@gmail.com");
+        sender.put("name", fromName);
+        sender.put("email", fromEmail);
 
         Map<String, String> recipient = new HashMap<>();
         recipient.put("email", to);
 
-        email.put("sender", sender);
-        email.put("to", List.of(recipient));
-        email.put("subject", subject);
-        email.put("htmlContent", htmlContent);
+        payload.put("sender", sender);
+        payload.put("to", List.of(recipient));
+        payload.put("subject", subject);
+        payload.put("htmlContent", html);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("api-key", apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", apiKey);
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(email, headers);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
         restTemplate.postForEntity(BREVO_URL, request, String.class);
+
+        log.info("Brevo email sent to: {}", to);
     }
 }
