@@ -72,7 +72,7 @@ export default function LegalPage() {
                     <div className="px-6 sm:px-8 py-4 bg-dark-hover border-t border-dark-border">
                         <p className="text-xs text-gray-500 text-center">
                             If you have questions about this {pageData.title.toLowerCase()}, contact us at{' '}
-                            <a href="mailto:support@justicelinker.in" className="text-brand-orange hover:underline">support@justicelinker.in</a>
+                            <a href="mailto:justicelinker.official@gmail.com" className="text-brand-orange hover:underline">justicelinker.official@gmail.com</a>
                         </p>
                     </div>
                 </div>
