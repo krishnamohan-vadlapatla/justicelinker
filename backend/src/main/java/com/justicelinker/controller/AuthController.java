@@ -36,10 +36,10 @@ public class AuthController {
             String token = authService.verifyOtp(request.getEmail(), request.getOtp());
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true)
-                    .secure(false) // Set to true in production
+                    .secure(true) // Set to true in production
                     .path("/")
                     .maxAge(Duration.ofHours(24))
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .build();
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
