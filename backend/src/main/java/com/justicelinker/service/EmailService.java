@@ -157,18 +157,28 @@ public class EmailService {
     private void sendHtml(String to, String subject, String html) {
     try {
 
-        brevoEmailClient.sendEmail(
-                noReplyEmail,
-                "JusticeLinker",
-                to,
-                subject,
-                html
-        );
+        com.sendinblue.Client client = com.sendinblue.Client.getInstance();
+        client.setApiKey(System.getenv("BREVO_API_KEY"));
 
-        log.info("Email sent to: {} — Subject: {}", to, subject);
+        sibApi.TransactionalEmailsApi api = new sibApi.TransactionalEmailsApi();
+
+        sibModel.SendSmtpEmail email = new sibModel.SendSmtpEmail();
+
+        email.setSubject(subject);
+        email.setHtmlContent(html);
+
+        email.setSender(new sibModel.SendSmtpEmailSender()
+                .email("justicelinker.noreply@gmail.com")
+                .name("JusticeLinker"));
+
+        email.addToItem(new sibModel.SendSmtpEmailTo().email(to));
+
+        api.sendTransacEmail(email);
+
+        log.info("Email sent via Brevo API to {}", to);
 
     } catch (Exception e) {
-        log.error("Failed to send email to {}: {}", to, e.getMessage());
+        log.error("Email failed: {}", e.getMessage());
     }
 }
 
