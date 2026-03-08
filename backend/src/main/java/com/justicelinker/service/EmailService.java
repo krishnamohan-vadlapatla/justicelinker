@@ -1,12 +1,9 @@
 package com.justicelinker.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -159,6 +156,7 @@ public class EmailService {
 
     private void sendHtml(String to, String subject, String html) {
     try {
+
         brevoEmailClient.sendEmail(
                 noReplyEmail,
                 "JusticeLinker",
@@ -166,7 +164,9 @@ public class EmailService {
                 subject,
                 html
         );
+
         log.info("Email sent to: {} — Subject: {}", to, subject);
+
     } catch (Exception e) {
         log.error("Failed to send email to {}: {}", to, e.getMessage());
     }
