@@ -7,7 +7,7 @@ export const legalTranslations = {
                 { heading: '1. Information We Collect', text: 'We collect information you provide when filing complaints, including your name, email, phone number, and location details.' },
                 { heading: '2. Use of Information', text: 'Used solely for processing complaints. We do not sell your personal data to third parties.' },
                 { heading: '3. Data Security', text: 'Data is stored securely on encrypted servers. We implement industry-standard security measures including HTTPS and secure JWT.' },
-                { heading: '4. Your Rights', text: 'You have the right to access, correct, or delete your personal data. Contact support@justicelinker.in.' }
+                { heading: '4. Your Rights', text: 'You have the right to access, correct, or delete your personal data. Contact justicelinker.official@gmail.com.' }
             ]
         },
         te: {
@@ -17,7 +17,7 @@ export const legalTranslations = {
                 { heading: '1. మేము సేకరించే సమాచారం', text: 'మీరు ఫిర్యాదులు చేసే సమయంలో మీ పేరు, ఈమెయిల్, ఫోన్ నంబర్ మరియు స్థాన వివరాలతో సహా మీరు అందించే సమాచారాన్ని మేము సేకరిస్తాము.' },
                 { heading: '2. సమాచార వినియోగం', text: 'ఫిర్యాదులను పరిష్కరించడానికి మాత్రమే ఉపయోగించబడుతుంది. మేము మీ వ్యక్తిగత డేటాను మూడవ పక్షాలకు విక్రయించము.' },
                 { heading: '3. డేటా భద్రత', text: 'డేటా ఎన్‌క్రిప్ట్ చేయబడిన సర్వర్‌లలో సురక్షితంగా నిల్వ చేయబడుతుంది. మేము HTTPS మరియు సురక్షిత JWT సహా పరిశ్రమ-ప్రామాణిక భద్రతా చర్యలను అమలు చేస్తాము.' },
-                { heading: '4. మీ హక్కులు', text: 'మీ వ్యక్తిగత డేటాను యాక్సెస్ చేయడానికి, సరిదిద్దడానికి లేదా తొలగించడానికి మీకు హక్కు ఉంది. support@justicelinker.in ని సంప్రదించండి.' }
+                { heading: '4. మీ హక్కులు', text: 'మీ వ్యక్తిగత డేటాను యాక్సెస్ చేయడానికి, సరిదిద్దడానికి లేదా తొలగించడానికి మీకు హక్కు ఉంది. justicelinker.official@gmail.com ని సంప్రదించండి.' }
             ]
         },
         hi: {
@@ -27,7 +27,7 @@ export const legalTranslations = {
                 { heading: '1. हमारे द्वारा एकत्र की जाने वाली जानकारी', text: 'शिकायत दर्ज करते समय आपके द्वारा प्रदान की जाने वाली जानकारी, जिसमें आपका नाम, ईमेल, फोन नंबर और स्थान विवरण शामिल है, हम एकत्र करते हैं।' },
                 { heading: '2. जानकारी का उपयोग', text: 'केवल शिकायतों को संसाधित करने के लिए उपयोग किया जाता है। हम आपका व्यक्तिगत डेटा तीसरे पक्षों को नहीं बेचते हैं।' },
                 { heading: '3. डेटा सुरक्षा', text: 'डेटा एन्क्रिप्टेड सर्वर पर सुरक्षित रूप से संग्रहीत किया जाता है। हम HTTPS और सुरक्षित JWT सहित उद्योग-मानक सुरक्षा उपाय लागू करते हैं।' },
-                { heading: '4. आपके अधिकार', text: 'आपको अपने व्यक्तिगत डेटा तक पहुंचने, सुधारने या हटाने का अधिकार है। support@justicelinker.in पर संपर्क करें।' }
+                { heading: '4. आपके अधिकार', text: 'आपको अपने व्यक्तिगत डेटा तक पहुंचने, सुधारने या हटाने का अधिकार है। justicelinker.official@gmail.com पर संपर्क करें।' }
             ]
         }
     },
