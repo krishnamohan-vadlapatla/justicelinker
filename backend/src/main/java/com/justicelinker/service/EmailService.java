@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+   private final BrevoEmailClient brevoEmailClient;    
 
     @Value("${app.noreply-email}")
     private String noReplyEmail;
@@ -158,19 +158,19 @@ public class EmailService {
     }
 
     private void sendHtml(String to, String subject, String html) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(noReplyEmail, "JusticeLinker");
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(html, true);
-            mailSender.send(message);
-            log.info("Email sent to: {} — Subject: {}", to, subject);
-        } catch (MessagingException | java.io.UnsupportedEncodingException e) {
-            log.error("Failed to send email to {}: {}", to, e.getMessage());
-        }
+    try {
+        brevoEmailClient.sendEmail(
+                noReplyEmail,
+                "JusticeLinker",
+                to,
+                subject,
+                html
+        );
+        log.info("Email sent to: {} — Subject: {}", to, subject);
+    } catch (Exception e) {
+        log.error("Failed to send email to {}: {}", to, e.getMessage());
     }
+}
 
     private String getStatusColor(String status) {
         return switch (status) {
