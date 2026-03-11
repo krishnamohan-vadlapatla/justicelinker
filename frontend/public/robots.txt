@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://justicelinker.vercel.app/sitemap.xml
