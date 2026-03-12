@@ -37,18 +37,25 @@ export const uploadImage = (file) => {
     });
 };
 
-
 // Admin APIs
 export const getAdminComplaints = (params) => api.get('/admin/complaints', { params });
 export const getAdminComplaint = (complaintId) => api.get(`/admin/complaints/${complaintId}`);
 export const getHighPriorityComplaints = (limit = 5) => api.get(`/admin/complaints/high-priority?limit=${limit}`);
-export const updateComplaintStatus = (complaintId, fromStatus, toStatus) =>
-    api.put(`/admin/complaints/${complaintId}/status`, { fromStatus, toStatus });
+
+// Updated to support reason
+export const updateComplaintStatus = (complaintId, fromStatus, toStatus, reason = null) =>
+    api.put(`/admin/complaints/${complaintId}/status`, { fromStatus, toStatus, reason });
+
 export const updateComplaintPriority = (complaintId, priority) =>
     api.put(`/admin/complaints/${complaintId}/priority`, { priority });
+
 export const getDashboardStats = () => api.get('/admin/dashboard/stats');
-export const getAdminUsers = (page = 0, size = 20) => api.get(`/admin/users?page=${page}&size=${size}`);
-export const updateUserStatus = (userId, status, reason = null) => api.put(`/admin/users/${userId}/status`, { status, reason });
+
+export const getAdminUsers = (page = 0, size = 20) =>
+    api.get(`/admin/users?page=${page}&size=${size}`);
+
+export const updateUserStatus = (userId, status, reason = null) =>
+    api.put(`/admin/users/${userId}/status`, { status, reason });
 
 // Admin Management (Super Admin)
 export const getAdminList = () => api.get('/admin/admins');
