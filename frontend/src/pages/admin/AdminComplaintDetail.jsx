@@ -67,14 +67,27 @@ export default function AdminComplaintDetail() {
     };
 
     const handleStatusChange = async (toStatus) => {
-        try {
-            await updateComplaintStatus(id, complaint.status, toStatus);
-            toast.success(`Status updated to ${toStatus.replace('_', ' ')}`);
-            fetchComplaint();
-        } catch (err) {
-            toast.error(err.response?.data?.message || 'Update failed');
+    let reason = null;
+
+    if (toStatus === 'REJECTED') {
+        reason = window.prompt('Please provide a reason for rejection:');
+        if (reason === null) return;
+        if (!reason.trim()) {
+            toast.error('Rejection reason is required');
+            return;
         }
-    };
+    } else if (toStatus === 'RESOLVED') {
+        reason = window.prompt('Provide resolution notes (optional):');
+    }
+
+    try {
+        await updateComplaintStatus(id, complaint.status, toStatus, reason);
+        toast.success(`Status updated to ${toStatus.replace('_', ' ')}`);
+        fetchComplaint();
+    } catch (err) {
+        toast.error(err.response?.data?.message || 'Update failed');
+    }
+};
 
     if (loading) return (
         <div className="flex items-center justify-center p-16">
