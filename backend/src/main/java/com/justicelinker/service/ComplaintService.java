@@ -38,10 +38,12 @@ public class ComplaintService {
     // We enforce strict transitions for normal admins, but allow SUPER_ADMIN to
     // bypass them.
     private static final Map<Complaint.ComplaintStatus, Set<Complaint.ComplaintStatus>> STRICT_TRANSITIONS = Map.of(
-            Complaint.ComplaintStatus.SUBMITTED, Set.of(Complaint.ComplaintStatus.UNDER_REVIEW),
+            Complaint.ComplaintStatus.SUBMITTED,
+            Set.of(Complaint.ComplaintStatus.UNDER_REVIEW, Complaint.ComplaintStatus.REJECTED),
             Complaint.ComplaintStatus.UNDER_REVIEW,
             Set.of(Complaint.ComplaintStatus.VERIFIED, Complaint.ComplaintStatus.REJECTED),
-            Complaint.ComplaintStatus.VERIFIED, Set.of(Complaint.ComplaintStatus.ASSIGNED),
+            Complaint.ComplaintStatus.VERIFIED,
+            Set.of(Complaint.ComplaintStatus.ASSIGNED, Complaint.ComplaintStatus.REJECTED),
             Complaint.ComplaintStatus.ASSIGNED, Set.of(Complaint.ComplaintStatus.IN_PROGRESS),
             Complaint.ComplaintStatus.IN_PROGRESS, Set.of(Complaint.ComplaintStatus.RESOLVED),
             Complaint.ComplaintStatus.RESOLVED,
@@ -249,7 +251,7 @@ public class ComplaintService {
         // Send status update email to complaint owner
         try {
             String userEmail = complaint.getUser().getEmail();
-            emailService.sendStatusUpdateEmail(userEmail, complaintId, currentStatus.name(), newStatus.name());
+            emailService.sendStatusUpdateEmail(userEmail, complaintId, currentStatus.name(), newStatus.name(), reason);
         } catch (Exception e) {
             log.warn("Failed to send status update email for {}: {}", complaintId, e.getMessage());
         }
