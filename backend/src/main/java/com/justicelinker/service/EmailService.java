@@ -241,4 +241,38 @@ public class EmailService {
                 .replace("<", "&lt;")
                 .replace(">", "&gt;");
     }
+    // ============ TEMPLATE BUILDER ============
+private String buildTemplate(String heading, String body) {
+
+    return "<!DOCTYPE html><html><body style='margin:0;padding:0;background:#0f172a;font-family:Segoe UI,Roboto,Arial,sans-serif'>"
+            +
+            "<div style='max-width:520px;margin:0 auto;padding:20px'>" +
+
+            "<div style='text-align:center;padding:24px 0;border-bottom:1px solid #1e293b'>" +
+            "<span style='font-size:20px;font-weight:bold'>" +
+            "<span style='color:#94a3b8'>Justice</span>" +
+            "<span style='color:#f97316'>Linker</span>" +
+            "</span>" +
+            "</div>" +
+
+            "<div style='padding:24px 0'>" +
+            "<h2 style='color:#e2e8f0;font-size:18px;margin:0 0 16px 0;text-align:center'>" +
+            heading +
+            "</h2>" +
+            body +
+            "</div>" +
+
+            "<div style='border-top:1px solid #1e293b;padding:20px 0;text-align:center'>" +
+            "<p style='color:#475569;font-size:11px;margin:0'>A harassment and injustice reporting initiative</p>" +
+            "<p style='color:#475569;font-size:11px;margin:4px 0 0 0'>Built for the people of Andhra Pradesh</p>" +
+            "<p style='color:#475569;font-size:11px;margin:8px 0 0 0'>Support: <a href='mailto:" +
+            supportEmail +
+            "' style='color:#f97316;text-decoration:none'>" +
+            supportEmail +
+            "</a></p>" +
+            "</div>" +
+
+            "</div>" +
+            "</body></html>";
+}
 }
