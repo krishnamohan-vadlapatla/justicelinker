@@ -73,6 +73,12 @@ backend/.env.example
 # nuxt.js build output
 .nuxt
 
+# Build outputs
+frontend/dist/
+
+# Database files
+backend/data/
+
 # vuepress build output
 .vuepress/dist
 
