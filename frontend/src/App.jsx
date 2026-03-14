@@ -43,7 +43,6 @@ export default function App() {
             <Route path="/login" element={user ? <Navigate to={['ADMIN', 'SUPER_ADMIN'].includes(user.role) ? '/admin' : '/dashboard'} replace /> : <UserLogin />} />
             <Route path="/admin/login" element={['ADMIN', 'SUPER_ADMIN'].includes(user?.role) ? <Navigate to="/admin" replace /> : <AdminLogin />} />
             <Route path="/legal/:page" element={<LegalPage />} />
-            <Route path="/transparency" element={<ProtectedRoute><TransparencyDashboard /></ProtectedRoute>} />
 
             {/* User routes */}
             <Route path="/" element={<ProtectedRoute allowedRoles={['USER']}><UserLayout /></ProtectedRoute>}>
@@ -54,6 +53,7 @@ export default function App() {
                 <Route path="complaints" element={<MyComplaints />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="disclaimer" element={<Disclaimer />} />
+                <Route path="transparency" element={<TransparencyDashboard />} />
             </Route>
 
             {/* Admin routes */}

@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { Home, FileText, User, LogOut, Bell, Menu, X, Activity, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Home, FileText, User, LogOut, Bell, Menu, X, Activity, PanelLeftClose, PanelLeft, Mail } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { getMyNotifications } from '../../api';
 
@@ -47,7 +47,6 @@ export default function UserLayout() {
         setShowNotifs(!showNotifs);
     };
 
-    // Close dropdown on outside click
     useEffect(() => {
         const handler = (e) => { if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifs(false); };
         document.addEventListener('mousedown', handler);
@@ -55,157 +54,38 @@ export default function UserLayout() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-dark-bg flex">
-            {/* Desktop Sidebar */}
-            <aside className={`hidden md:flex flex-col fixed left-0 top-0 h-screen bg-dark-card border-r border-dark-border z-40 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
-                {/* Logo Section */}
-                <div className="h-16 flex items-center justify-between px-4 border-b border-dark-border">
-                    <NavLink to="/dashboard" className="flex items-center gap-2.5 shrink-0 group">
-                        <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded group-hover:scale-105 transition-transform" />
-                        {sidebarOpen && (
-                            <span className="font-bold text-lg tracking-tight whitespace-nowrap">
-                                <span className="text-navy-200">Justice</span>
-                                <span className="text-brand-orange">Linker</span>
-                            </span>
-                        )}
-                    </NavLink>
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-                        {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
-                    </button>
-                </div>
-
-                {/* Navigation Links */}
-                <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-                    {links.map(({ to, icon: Icon, label }) => (
-                        <NavLink key={to} to={to} onClick={() => setMobileMenuOpen(false)}
-                            className={({ isActive }) =>
-                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                                    ? 'bg-brand-orange/10 text-brand-orange'
-                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                } ${!sidebarOpen ? 'justify-center' : ''}`
-                            }>
-                            <Icon size={20} />
-                            {sidebarOpen && <span>{label}</span>}
-                        </NavLink>
-                    ))}
-                </nav>
-
-                {/* Bottom Section - Language & User */}
-                <div className={`p-3 border-t border-dark-border ${!sidebarOpen ? 'flex flex-col items-center gap-2' : ''}`}>
-                    {/* Language Switcher */}
-                    <div className={`flex items-center gap-0.5 bg-dark-input rounded-lg p-0.5 ${!sidebarOpen ? 'flex-col' : ''}`}>
-                        <button onClick={() => changeLang('en')} title="English"
-                            className={`px-2 py-1.5 rounded text-xs font-medium transition-all ${i18n.language === 'en' ? 'bg-brand-orange text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {sidebarOpen ? 'EN' : 'E'}
-                        </button>
-                        <button onClick={() => changeLang('te')} title="Telugu"
-                            className={`px-2 py-1.5 rounded text-xs font-medium transition-all font-telugu ${i18n.language === 'te' ? 'bg-brand-orange text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {sidebarOpen ? 'తె' : 'త'}
-                        </button>
-                        <button onClick={() => changeLang('hi')} title="Hindi"
-                            className={`px-2 py-1.5 rounded text-xs font-medium transition-all ${i18n.language === 'hi' ? 'bg-brand-orange text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {sidebarOpen ? 'हि' : 'ह'}
-                        </button>
-                    </div>
-
-                    {/* Profile & Logout */}
-                    {sidebarOpen ? (
-                        <div className="flex items-center justify-between mt-3">
-                            <button onClick={() => navigate('/profile')} className="flex items-center gap-2 hover:bg-white/5 p-1.5 rounded-lg transition-colors">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-orange to-navy-400 flex items-center justify-center text-sm font-bold">
-                                    {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
-                                </div>
-                                <span className="text-sm text-gray-300 truncate max-w-[80px]">{user?.fullName || 'User'}</span>
-                            </button>
-                            <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10" title={t('nav.logout')}>
-                                <LogOut size={18} />
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col gap-2 mt-2">
-                            <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-orange to-navy-400 flex items-center justify-center text-sm font-bold hover:ring-2 hover:ring-brand-orange/50 transition-all">
-                                {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
-                            </button>
-                            <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10 mx-auto" title={t('nav.logout')}>
-                                <LogOut size={18} />
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </aside>
-
-            {/* Mobile Header */}
-            <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-dark-card/95 backdrop-blur-xl border-b border-dark-border z-50 flex items-center justify-between px-4">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-gray-400 hover:text-white transition-colors">
-                        <Menu size={24} />
-                    </button>
-                    <NavLink to="/dashboard" className="flex items-center gap-2">
+        <div className="min-h-screen bg-dark-bg flex flex-col">
+            {/* Desktop Header - Top Bar with Actions */}
+            <header className="hidden md:flex fixed top-0 left-0 right-0 h-16 bg-dark-card/95 backdrop-blur-xl border-b border-dark-border z-50">
+                <div className={`flex-1 flex items-center justify-between px-4 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+                    {/* Left: Logo + Brand */}
+                    <NavLink to="/dashboard" className="flex items-center gap-2.5 shrink-0">
                         <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded" />
-                        <span className="font-bold text-base">
+                        <span className="font-bold text-lg tracking-tight">
                             <span className="text-navy-200">Justice</span>
                             <span className="text-brand-orange">Linker</span>
                         </span>
                     </NavLink>
-                </div>
-                <div className="flex items-center gap-1">
-                    {/* Language Switcher */}
-                    <div className="flex items-center gap-0.5 bg-dark-input rounded-lg p-0.5">
-                        <button onClick={() => changeLang('en')} className={`px-1.5 py-1 rounded text-[10px] font-medium ${i18n.language === 'en' ? 'bg-brand-orange text-white' : 'text-gray-400'}`}>E</button>
-                        <button onClick={() => changeLang('te')} className={`px-1.5 py-1 rounded text-[10px] font-medium ${i18n.language === 'te' ? 'bg-brand-orange text-white' : 'text-gray-400'}`}>త</button>
-                        <button onClick={() => changeLang('hi')} className={`px-1.5 py-1 rounded text-[10px] font-medium ${i18n.language === 'hi' ? 'bg-brand-orange text-white' : 'text-gray-400'}`}>ह</button>
-                    </div>
-                    {/* Profile */}
-                    <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-orange to-navy-400 flex items-center justify-center text-xs font-bold ml-1">
-                        {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
-                    </button>
-                    {/* Logout */}
-                    <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 transition-colors">
-                        <LogOut size={18} />
-                    </button>
-                </div>
-            </header>
 
-            {/* Mobile Menu Overlay */}
-            {mobileMenuOpen && (
-                <div className="md:hidden fixed inset-0 z-50">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-                    <div className="absolute left-0 top-0 h-full w-72 bg-dark-card border-r border-dark-border shadow-2xl animate-slide-in">
-                        <div className="h-16 flex items-center justify-between px-4 border-b border-dark-border">
-                            <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
-                                <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded" />
-                                <span className="font-bold text-base">
-                                    <span className="text-navy-200">Justice</span>
-                                    <span className="text-brand-orange">Linker</span>
-                                </span>
-                            </NavLink>
-                            <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-gray-400 hover:text-white">
-                                <X size={20} />
+                    {/* Right: Actions - Language, Notifications, Profile, Logout */}
+                    <div className="flex items-center gap-2">
+                        {/* Language Switcher */}
+                        <div className="flex items-center gap-0.5 bg-dark-input rounded-lg p-0.5">
+                            <button onClick={() => changeLang('en')} title="English"
+                                className={`px-2 py-1 rounded text-xs font-medium transition-all ${i18n.language === 'en' ? 'bg-brand-orange text-white' : 'text-gray-400 hover:text-white'}`}>
+                                EN
+                            </button>
+                            <button onClick={() => changeLang('te')} title="Telugu"
+                                className={`px-2 py-1 rounded text-xs font-medium transition-all font-telugu ${i18n.language === 'te' ? 'bg-brand-orange text-white' : 'text-gray-400 hover:text-white'}`}>
+                                TE
+                            </button>
+                            <button onClick={() => changeLang('hi')} title="Hindi"
+                                className={`px-2 py-1 rounded text-xs font-medium transition-all ${i18n.language === 'hi' ? 'bg-brand-orange text-white' : 'text-gray-400 hover:text-white'}`}>
+                                HI
                             </button>
                         </div>
-                        <nav className="p-3 space-y-1">
-                            {links.map(({ to, icon: Icon, label }) => (
-                                <NavLink key={to} to={to} onClick={() => setMobileMenuOpen(false)}
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
-                                            ? 'bg-brand-orange/10 text-brand-orange'
-                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                        }`
-                                    }>
-                                    <Icon size={20} />
-                                    {label}
-                                </NavLink>
-                            ))}
-                        </nav>
-                    </div>
-                </div>
-            )}
 
-            {/* Main Content */}
-            <main className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} pt-16 md:pt-0`}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
-                    {/* Desktop Notification Bell (top right) */}
-                    <div className="hidden md:flex justify-end mb-4">
+                        {/* Notifications */}
                         <div className="relative" ref={notifRef}>
                             <button onClick={toggleNotifs} className="relative p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
                                 <Bell size={20} />
@@ -254,9 +134,216 @@ export default function UserLayout() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Profile */}
+                        <button onClick={() => navigate('/profile')} className="flex items-center gap-2 hover:bg-white/5 p-1.5 pr-3 rounded-lg transition-colors">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-orange to-navy-400 flex items-center justify-center text-sm font-bold">
+                                {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                            </div>
+                            <span className="text-sm text-gray-300">{user?.fullName || 'User'}</span>
+                        </button>
+
+                        {/* Logout */}
+                        <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10" title={t('nav.logout')}>
+                            <LogOut size={18} />
+                        </button>
                     </div>
+                </div>
+            </header>
+
+            {/* Desktop Sidebar - Navigation Only */}
+            <aside className={`hidden md:flex flex-col fixed left-0 top-0 h-screen bg-dark-card border-r border-dark-border z-40 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+                {/* Logo Section */}
+                <div className="h-16 flex items-center justify-between px-4 border-b border-dark-border">
+                    <NavLink to="/dashboard" className="flex items-center gap-2.5 shrink-0 group">
+                        <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded group-hover:scale-105 transition-transform" />
+                        {sidebarOpen && (
+                            <span className="font-bold text-lg tracking-tight whitespace-nowrap">
+                                <span className="text-navy-200">Justice</span>
+                                <span className="text-brand-orange">Linker</span>
+                            </span>
+                        )}
+                    </NavLink>
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                        {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
+                    </button>
+                </div>
+
+                {/* Navigation Links Only */}
+                <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+                    {links.map(({ to, icon: Icon, label }) => (
+                        <NavLink key={to} to={to} onClick={() => setMobileMenuOpen(false)}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                                    ? 'bg-brand-orange/10 text-brand-orange'
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                } ${!sidebarOpen ? 'justify-center' : ''}`
+                            }>
+                            <Icon size={20} />
+                            {sidebarOpen && <span>{label}</span>}
+                        </NavLink>
+                    ))}
+                </nav>
+            </aside>
+
+            {/* Mobile Header */}
+            <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-dark-card/95 backdrop-blur-xl border-b border-dark-border z-50 flex items-center justify-between px-4">
+                <div className="flex items-center gap-3">
+                    <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-gray-400 hover:text-white transition-colors">
+                        <Menu size={24} />
+                    </button>
+                    <NavLink to="/dashboard" className="flex items-center gap-2">
+                        <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded" />
+                        <span className="font-bold text-base">
+                            <span className="text-navy-200">Justice</span>
+                            <span className="text-brand-orange">Linker</span>
+                        </span>
+                    </NavLink>
+                </div>
+                <div className="flex items-center gap-1">
+                    {/* Language Switcher */}
+                    <div className="flex items-center gap-0.5 bg-dark-input rounded-lg p-0.5">
+                        <button onClick={() => changeLang('en')} className={`px-1.5 py-1 rounded text-[10px] font-medium ${i18n.language === 'en' ? 'bg-brand-orange text-white' : 'text-gray-400'}`}>E</button>
+                        <button onClick={() => changeLang('te')} className={`px-1.5 py-1 rounded text-[10px] font-medium ${i18n.language === 'te' ? 'bg-brand-orange text-white' : 'text-gray-400'}`}>TE</button>
+                        <button onClick={() => changeLang('hi')} className={`px-1.5 py-1 rounded text-[10px] font-medium ${i18n.language === 'hi' ? 'bg-brand-orange text-white' : 'text-gray-400'}`}>HI</button>
+                    </div>
+                    {/* Profile */}
+                    <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-orange to-navy-400 flex items-center justify-center text-xs font-bold ml-1">
+                        {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                    </button>
+                    {/* Logout */}
+                    <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 transition-colors">
+                        <LogOut size={18} />
+                    </button>
+                </div>
+            </header>
+
+            {/* Mobile Menu Overlay */}
+            {mobileMenuOpen && (
+                <div className="md:hidden fixed inset-0 z-50">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <div className="absolute left-0 top-0 h-full w-72 bg-dark-card border-r border-dark-border shadow-2xl animate-slide-in">
+                        <div className="h-16 flex items-center justify-between px-4 border-b border-dark-border">
+                            <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
+                                <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded" />
+                                <span className="font-bold text-base">
+                                    <span className="text-navy-200">Justice</span>
+                                    <span className="text-brand-orange">Linker</span>
+                                </span>
+                            </NavLink>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-gray-400 hover:text-white">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <nav className="p-3 space-y-1">
+                            {links.map(({ to, icon: Icon, label }) => (
+                                <NavLink key={to} to={to} onClick={() => setMobileMenuOpen(false)}
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
+                                            ? 'bg-brand-orange/10 text-brand-orange'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        }`
+                                    }>
+                                    <Icon size={20} />
+                                    {label}
+                                </NavLink>
+                            ))}
+                        </nav>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Content */}
+            <main className={`flex-1 pt-16 md:pt-0 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
                     <Outlet />
                 </div>
+
+                {/* Professional Footer - Desktop */}
+                <footer className="hidden md:block border-t border-dark-border bg-dark-card/80">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {/* About Section */}
+                            <div className="sm:col-span-2 lg:col-span-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <img src="/JusticeLinker-favicon.png" alt="" className="w-6 h-6 rounded" />
+                                    <span className="font-bold text-sm">
+                                        <span className="text-navy-200">Justice</span>
+                                        <span className="text-brand-orange">Linker</span>
+                                    </span>
+                                </div>
+                                <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                                    {t('footer.about_desc')}
+                                </p>
+                                <a href="mailto:justicelinker.official@gmail.com?subject=JusticeLinker%20Support%20Request"
+                                    className="inline-flex items-center gap-2 text-xs text-brand-orange/80 hover:text-brand-orange transition-colors group">
+                                    <Mail size={12} className="shrink-0" />
+                                    <span className="group-hover:underline">justicelinker.official@gmail.com</span>
+                                </a>
+                            </div>
+
+                            {/* Quick Links */}
+                            <div>
+                                <h4 className="text-sm font-semibold text-gray-300 mb-3">{t('footer.quick_links')}</h4>
+                                <ul className="space-y-2">
+                                    <li><NavLink to="/dashboard" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.home')}</NavLink></li>
+                                    <li><NavLink to="/complaints/new" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('dashboard.file_complaint')}</NavLink></li>
+                                    <li><NavLink to="/complaints" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.complaints')}</NavLink></li>
+                                    <li><NavLink to="/profile" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.profile')}</NavLink></li>
+                                    <li><NavLink to="/transparency" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('nav.transparency')}</NavLink></li>
+                                </ul>
+                            </div>
+
+                            {/* Legal & Transparency */}
+                            <div>
+                                <h4 className="text-sm font-semibold text-gray-300 mb-3">{t('footer.legal')}</h4>
+                                <ul className="space-y-2">
+                                    <li><NavLink to="/legal/privacy-policy" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('footer.privacy_policy')}</NavLink></li>
+                                    <li><NavLink to="/legal/terms" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('footer.terms')}</NavLink></li>
+                                    <li><NavLink to="/legal/disclaimer" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('footer.disclaimer')}</NavLink></li>
+                                    <li><NavLink to="/legal/data-protection" className="text-xs text-gray-400 hover:text-brand-orange transition-colors">{t('footer.data_protection')}</NavLink></li>
+                                </ul>
+                            </div>
+
+                            {/* Contact & Support */}
+                            <div>
+                                <h4 className="text-sm font-semibold text-gray-300 mb-3">{t('footer.contact')}</h4>
+                                <ul className="space-y-3">
+                                    <li>
+                                        <a href="mailto:justicelinker.official@gmail.com?subject=JusticeLinker%20Support%20Request"
+                                            className="flex items-center gap-2 text-xs text-gray-400 hover:text-brand-orange transition-colors group">
+                                            <Mail size={12} className="shrink-0 text-brand-orange/60" />
+                                            <span className="group-hover:underline">Mail Us</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Independent Disclaimer */}
+                        <div className="mt-8 pt-6 border-t border-dark-border">
+                            <div className="max-w-3xl mx-auto flex flex-col items-center text-center">
+                                <p className="text-[11px] text-gray-500 leading-relaxed">
+                                    {t('footer.independent_disclaimer')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Copyright Bar */}
+                    <div className="border-t border-dark-border bg-dark-bg/50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                            <div className="flex flex-col items-center text-center gap-2">
+                                <p className="text-xs text-gray-500 font-medium">
+                                    © {new Date().getFullYear()} JusticeLinker · {t('footer.copyright')}
+                                </p>
+                                <p className="text-[11px] text-gray-600">
+                                    {t('footer.built_for')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
             </main>
 
             {/* Mobile Bottom Navigation */}
@@ -273,17 +360,6 @@ export default function UserLayout() {
                     ))}
                 </div>
             </nav>
-
-            {/* Footer - Desktop Only */}
-            <footer className={`hidden md:block fixed bottom-0 right-0 ${sidebarOpen ? 'left-64' : 'left-20'} transition-all duration-300 border-t border-dark-border bg-dark-card/80`}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-                    <div className="flex flex-col items-center text-center gap-1">
-                        <p className="text-[11px] text-gray-500 font-medium">
-                            © {new Date().getFullYear()} JusticeLinker · {t('footer.copyright')}
-                        </p>
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 }

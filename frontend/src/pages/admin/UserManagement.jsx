@@ -105,21 +105,26 @@ export default function UserManagement() {
                                         {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
                                     </td>
                                     <td className="px-4 py-4">
-                                        <div className="flex items-center gap-2">
-                                            {u.status !== 'ACTIVE' && (
-                                                <button onClick={() => handleStatusChangeClick(u.id, 'ACTIVE')} className="text-green-500 hover:bg-green-500/10 p-1.5 rounded" title="Activate">
-                                                    <CheckCircle size={16} />
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            {u.status === 'SUSPENDED' && (
+                                                <button onClick={() => handleStatusChangeClick(u.id, 'ACTIVE')} className="px-2.5 py-1.5 bg-green-500/10 text-green-500 hover:bg-green-500/20 rounded-lg text-xs font-medium transition-colors">
+                                                    Activate
                                                 </button>
                                             )}
-                                            {u.status !== 'SUSPENDED' && (
-                                                <button onClick={() => handleStatusChangeClick(u.id, 'SUSPENDED')} className="text-yellow-500 hover:bg-yellow-500/10 p-1.5 rounded" title="Suspend">
-                                                    <Ban size={16} />
+                                            {u.status === 'TERMINATED' && (
+                                                <button onClick={() => handleStatusChangeClick(u.id, 'ACTIVE')} className="px-2.5 py-1.5 bg-green-500/10 text-green-500 hover:bg-green-500/20 rounded-lg text-xs font-medium transition-colors">
+                                                    Reactivate
                                                 </button>
                                             )}
-                                            {u.status !== 'TERMINATED' && (
-                                                <button onClick={() => handleStatusChangeClick(u.id, 'TERMINATED')} className="text-red-500 hover:bg-red-500/10 p-1.5 rounded" title="Terminate">
-                                                    <Ban size={16} />
-                                                </button>
+                                            {u.status === 'ACTIVE' && (
+                                                <>
+                                                    <button onClick={() => handleStatusChangeClick(u.id, 'SUSPENDED')} className="px-2.5 py-1.5 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-lg text-xs font-medium transition-colors">
+                                                        Suspend
+                                                    </button>
+                                                    <button onClick={() => handleStatusChangeClick(u.id, 'TERMINATED')} className="px-2.5 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg text-xs font-medium transition-colors">
+                                                        Terminate
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
                                     </td>
