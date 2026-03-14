@@ -198,21 +198,19 @@
   animation: slideIn 0.3s ease-out forwards;
 }
 
-/* Sweep Shine Animation */
+/* Sweep Shine Animation - optimized for compositing */
 @keyframes shine {
   0% {
-    left: -150%;
+    transform: translateX(-150%);
   }
 
   50% {
-    left: 150%;
+    transform: translateX(150%);
   }
 
   100% {
-    left: 150%;
+    transform: translateX(150%);
   }
-
-  /* Pause between sweeps */
 }
 
 .animate-shine {
