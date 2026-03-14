@@ -27,7 +27,7 @@ export default function AdminLayout() {
         <div className="min-h-screen bg-dark-bg flex flex-col">
             {/* Desktop Header - Top Bar with Actions */}
             <header className="hidden md:flex fixed top-0 left-0 right-0 h-16 bg-dark-card/95 backdrop-blur-xl border-b border-dark-border z-50">
-                <div className={`flex-1 flex items-center justify-between px-4 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+                <div className="flex-1 flex items-center justify-between px-6">
                     {/* Left: Logo + Brand */}
                     <NavLink to="/admin" className="flex items-center gap-2.5 shrink-0">
                         <img src="/JusticeLinker-favicon.png" alt="JusticeLinker" className="w-8 h-8 rounded" />
@@ -178,7 +178,7 @@ export default function AdminLayout() {
             )}
 
             {/* Main Content */}
-            <main className={`flex-1 pt-16 md:pt-0 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
+            <main className={`flex-1 pt-16 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-24 sm:pb-6">
                     <Outlet />
                 </div>
