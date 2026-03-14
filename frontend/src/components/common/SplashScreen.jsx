@@ -13,7 +13,9 @@ const SplashScreen = () => {
                     <img
                         src="/JusticeLinker-favicon.png"
                         alt="JusticeLinker Logo"
+                        aria-label="JusticeLinker logo"
                         className="relative z-10 w-full h-full object-contain drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]"
+                        loading="lazy"
                     />
 
                     {/* Shine sweeping effect */}
