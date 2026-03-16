@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rate_limit_tracker", indexes = {
-    @Index(name = "idx_rate_limit_key", columnList = "key", unique = true)
+    @Index(name = "idx_rate_limit_key", columnList = "rate_limit_key", unique = true)
 })
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class RateLimitTracker {
@@ -15,7 +15,7 @@ public class RateLimitTracker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name = "rate_limit_key", nullable = false, unique = true, length = 100)
     private String key;
 
     @Column(nullable = false)
