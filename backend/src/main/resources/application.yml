@@ -47,5 +47,12 @@ app:
   noreply-email: justicelinker.noreply@gmail.com
   support-email: justicelinker.official@gmail.com
 
+rate-limit:
+  otp:
+    requests-per-hour: 5
+    wrong-attempts-max: 3
+    lockout-duration-minutes: 30
+    failed-attempts-ttl-hours: 1
+
 server:
   port: ${PORT:8080}
