@@ -52,13 +52,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- PostgreSQL (for Railway) -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- H2 for development -->
         <dependency>
             <groupId>com.h2database</groupId>
