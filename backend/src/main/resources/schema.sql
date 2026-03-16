@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS rate_limit_tracker (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    rate_limit_key VARCHAR(100) NOT NULL UNIQUE,
+    request_count INT NOT NULL DEFAULT 0,
+    failed_attempts INT NOT NULL DEFAULT 0,
+    locked_until DATETIME,
+    window_start DATETIME NOT NULL,
+    last_failed_attempt DATETIME,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
