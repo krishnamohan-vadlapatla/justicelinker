@@ -148,9 +148,9 @@ graph TB
         Email[Brevo<br/>Email Service]
     end
 
-    U -->|"OTP Login"| Frontend
-    A -->|"JWT Login"| Frontend
-    SA -->|"JWT Login"| Frontend
+    U -->|"OTP Login<br/>JWT Token"| Frontend
+    A -->|"Password<br/>JWT Token"| Frontend
+    SA -->|"Password<br/>JWT Token"| Frontend
     P -->|"Public Access"| Frontend
     
     Frontend -->|"REST API"| Backend
@@ -168,12 +168,12 @@ graph TB
 - **Email Service**: Brevo for transactional emails
 
 ### Authentication Flow
-| User Type | Login Method | Access Level |
-|-----------|--------------|--------------|
-| Citizens | OTP (Email) | File complaints, track status, profile |
-| Admins | JWT (Password) | Manage complaints, moderate users |
-| Super Admin | JWT (Password) | Full system control, admin management |
-| Public | No Login | View stats, legal pages, language switch |
+| User Type | Login Method | Token | Access Level |
+|-----------|-------------|-------|--------------|
+| Citizens | OTP (Email) | JWT | File complaints, track status, profile |
+| Admins | Password | JWT | Manage complaints, moderate users |
+| Super Admin | Password | JWT | Full system control, admin management |
+| Public | No Login | - | View stats, legal pages, language switch |
 
 ---
 
