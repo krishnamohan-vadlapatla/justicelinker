@@ -118,38 +118,38 @@ JusticeLinker implements a **three-tier role-based access control (RBAC)** syste
 ```mermaid
 graph TB
     subgraph Users
-        U[👤 Citizens]
-        A[👮 Admins]
-        P[🌐 Public Visitors]
+        U[Citizens]
+        A[Admins]
+        P[Public Visitors]
     end
 
-    subgraph Frontend["Frontend (Vercel)"]
+    subgraph Frontend["Frontend - Vercel"]
         UI[React 18 SPA]
-        I18n[i18n (EN/HI/TE)]
+        I18n[i18n]
         Tailwind[Tailwind CSS]
     end
 
-    subgraph Backend["Backend API (Railway)"]
+    subgraph Backend["Backend API - Railway"]
         API[Spring Boot 3.4]
         JWT[JWT Auth]
-        RL[Rate Limiter<br/>Bucket4j]
+        RL[Rate Limiter]
         Valid[Validation]
     end
 
     subgraph Database["Data Layer"]
         MySQL[(MySQL 8.0)]
-        Cache[Caffeine Cache]
+        Cache[Caffeine]
     end
 
     subgraph External["External Services"]
-        Cloud[☁️ Cloudinary<br/>Image Storage]
-        Email[📧 Brevo<br/>Email Service]
+        Cloud[Cloudinary]
+        Email[Brevo Email]
     end
 
-    U -->|HTTPS| UI
-    A -->|JWT| UI
-    P -->|Read-Only| UI
-    UI -->|API Calls| API
+    U --> UI
+    A --> UI
+    P --> UI
+    UI --> API
     API --> JWT
     API --> RL
     API --> Valid
