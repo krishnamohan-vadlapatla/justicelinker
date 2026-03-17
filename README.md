@@ -120,43 +120,45 @@ graph TB
     subgraph Users
         U[Citizens]
         A[Admins]
-        P[Public Visitors]
+        SA[Super Admin]
+    end
+
+    subgraph Public
+        P[Public Visitors<br/>No Login]
     end
 
     subgraph Frontend["Frontend - Vercel"]
-        UI[React 18 SPA]
-        I18n[i18n]
+        React[React 18 SPA]
+        i18n[i18n - EN/HI/TE]
         Tailwind[Tailwind CSS]
     end
 
     subgraph Backend["Backend API - Railway"]
-        API[Spring Boot 3.4]
-        JWT[JWT Auth]
-        RL[Rate Limiter]
-        Valid[Validation]
+        SB[Spring Boot 3.4]
+        Auth[OTP / JWT Auth]
+        RateLim[Rate Limiter<br/>Bucket4j]
     end
 
-    subgraph Database["Data Layer"]
+    subgraph DB["Database - Railway"]
         MySQL[(MySQL 8.0)]
-        Cache[Caffeine]
     end
 
     subgraph External["External Services"]
-        Cloud[Cloudinary]
-        Email[Brevo Email]
+        Cloud[Cloudinary<br/>Image Storage]
+        Email[Brevo<br/>Email Service]
     end
 
-    U --> UI
-    A --> UI
-    P --> UI
-    UI --> API
-    API --> JWT
-    API --> RL
-    API --> Valid
-    API --> MySQL
-    API --> Cache
-    API --> Cloud
-    API --> Email
+    U -->|"OTP Login"| Frontend
+    A -->|"JWT Login"| Frontend
+    SA -->|"JWT Login"| Frontend
+    P -->|"Public Access"| Frontend
+    
+    Frontend -->|"REST API"| Backend
+    Backend --> Auth
+    Backend --> RateLim
+    Backend --> MySQL
+    Backend --> Cloud
+    Backend --> Email
 ```
 
 - **Frontend**: React.js Single Page Application (SPA) deployed on Vercel
@@ -164,6 +166,14 @@ graph TB
 - **Database**: MySQL 8.0 - ACID compliant, structured data
 - **Media Storage**: Cloudinary CDN for scalable image upload/delivery
 - **Email Service**: Brevo for transactional emails
+
+### Authentication Flow
+| User Type | Login Method | Access Level |
+|-----------|--------------|--------------|
+| Citizens | OTP (Email) | File complaints, track status, profile |
+| Admins | JWT (Password) | Manage complaints, moderate users |
+| Super Admin | JWT (Password) | Full system control, admin management |
+| Public | No Login | View stats, legal pages, language switch |
 
 ---
 
