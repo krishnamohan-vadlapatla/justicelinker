@@ -123,10 +123,6 @@ graph TB
         SA[Super Admin]
     end
 
-    subgraph Public
-        P[Public Visitors<br/>No Login]
-    end
-
     subgraph Frontend["Frontend - Vercel"]
         React[React 18 SPA]
         i18n[i18n - EN/HI/TE]
@@ -151,7 +147,6 @@ graph TB
     U -->|"OTP Login<br/>JWT Token"| Frontend
     A -->|"Password<br/>JWT Token"| Frontend
     SA -->|"Password<br/>JWT Token"| Frontend
-    P -->|"Public Access"| Frontend
     
     Frontend -->|"REST API"| Backend
     Backend --> Auth
@@ -173,7 +168,6 @@ graph TB
 | Citizens | OTP (Email) | JWT | File complaints, track status, profile |
 | Admins | Password | JWT | Manage complaints, moderate users |
 | Super Admin | Password | JWT | Full system control, admin management |
-| Public | No Login | - | View stats, legal pages, language switch |
 
 ---
 
