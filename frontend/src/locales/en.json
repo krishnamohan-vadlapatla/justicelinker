@@ -69,7 +69,7 @@
     "description": "Description",
     "description_placeholder": "Describe the issue in detail",
     "max_chars": "Max 1000 chars",
-    "evidence": "Evidence Evidence",
+    "evidence": "Evidence",
     "evidence_recommended": "Optional but Strongly Recommended",
     "evidence_helper": "Uploading photo evidence helps faster verification and resolution. Up to 3 images, PNG/JPEG, max 5MB each.",
     "evidence_desc": "Up to 3 images, PNG/JPEG, max 5MB each",
