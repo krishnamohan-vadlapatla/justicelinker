@@ -326,7 +326,9 @@ Resolution + Closure
 
 **Project Maintainer**: [Krishna Mohan Vadlapatla](https://github.com/krishnamohan-vadlapatla)
 
-- 🌐 **Live Demo**: [https://justicelinker.vercel.app/](https://justicelinker.vercel.app/)
+- 🚀 **Live Demo**: [JusticeLinker](https://justicelinker.vercel.app/)
+- 💻 **GitHub Repository**: [Repository](https://github.com/krishnamohan-vadlapatla/justicelinker)
+- 💼 **LinkedIn**: [Krishna Mohan Vadlapatla](https://www.linkedin.com/in/krishna-mohan-vadlapatla/)
 
 ---
 
